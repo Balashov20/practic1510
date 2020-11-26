@@ -1,4 +1,7 @@
 from typing import Tuple, List, Set, Optional
+import pathlib
+import typing as tp
+from random import randint
 
 
 def read_sudoku(filename: str) -> List[List[str]]:
@@ -49,10 +52,8 @@ def get_row(grid: List[List[str]], pos: Tuple[int, int]) -> List[str]:
     >>> get_row([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (2, 0))
     ['.', '8', '9']
     """
-    for i in range(len(grid)):
-        if pos[0] == i:
-            return grid[i]
-            break
+    return grid[pos[0]]
+
     pass
 
 
@@ -113,10 +114,10 @@ def find_empty_positions(grid: List[List[str]]) -> Optional[Tuple[int, int]]:
     >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
     (2, 0)
     """
-    for i in range(3):
-        for j in range(3):
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
             if grid[i][j] == '.':
-                return i, j
+                return (i, j)
     pass
 
 
@@ -213,6 +214,24 @@ def generate_sudoku(N: int) -> List[List[str]]:
     >>> check_solution(solution)
     True
     """
+    g_values_count = 9
+    count = g_values_count * g_values_count
+    values = set("123456789")
+    values_count = len(values)
+
+    n = min(N, count)
+    count_of_vacations = count - n
+
+    grid = [["." for i in range(g_values_count)] for j in range(g_values_count)]
+
+    solved_grid = solve(grid)
+    for vacation in range(count_of_vacations):
+        i, j = randint(0, 8), randint(0, 8)
+        while solved_grid[i][j] == ".":
+            i, j = randint(0, 8), randint(0, 8)
+        solved_grid[i][j] = "."
+
+    return solved_grid
 
     pass
 
