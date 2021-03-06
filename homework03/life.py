@@ -31,10 +31,10 @@ class GameOfLife:
 
     def create_grid(self, randomize: bool=False) -> Grid:
         # Copy from previous assignment
-        if not randomize:
-            grid = [[0 for x in range(self.cell_width)] for i in range(self.cell_height)]
+        if randomize:
+            grid = [[random.randint(0, 1) for x in range(self.cols)] for i in range(self.rows)]
         else:
-            grid = [[random.randint(0, 1) for x in range(self.cell_width)] for i in range(self.cell_height)]
+            grid = [[0 for x in range(self.cols)] for i in range(self.rows)]
         return grid
 
     def get_neighbours(self, cell: Cell) -> Cells:
@@ -45,30 +45,30 @@ class GameOfLife:
         height_end = cell[0] + 1
         if (cell[0] == 0):
             height_begin = 0
-        elif (cell[0] == self.cell_height - 1):
+        elif (cell[0] == self.rows - 1):
             height_end = cell[0]
 
         width_begin = cell[1] - 1
         width_end = cell[1] + 1
         if (cell[1] == 0):
             width_begin = 0
-        elif (cell[1] == self.cell_width - 1):
+        elif (cell[1] == self.cols - 1):
             width_end = cell[1]
 
         for i in range(height_begin, height_end + 1):
             for j in range(width_begin, width_end + 1):
                 if not ((cell[0] == i) and (cell[1] == j)):
-                    cells.append(self.grid[i][j])
+                    cells.append(self.curr_generation[i][j])
 
         return cells
 
     def get_next_generation(self) -> Grid:
         # Copy from previous assignment
         new_grid = []
-        for i in range(self.cell_height):
+        for i in range(self.rows):
             new_cell = []
-            for j in range(self.cell_width):
-                if self.grid[i][j] == 0:
+            for j in range(self.cols):
+                if self.curr_generation[i][j] == 0:
                     if self.get_neighbours((i, j)).count(1) == 3:
                         new_cell.append(1)
                     else:
