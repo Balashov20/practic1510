@@ -7,7 +7,7 @@ from ui import UI
 
 class GUI(UI):
 
-    def __init__(self, life: GameOfLife, cell_size: int=10, speed: int=10) -> None:
+    def __init__(self, life: GameOfLife, cell_size: int = 10, speed: int = 10) -> None:
         super().__init__(life)
 
         self.cell_size = cell_size
@@ -21,7 +21,6 @@ class GUI(UI):
         self.speed = speed
 
     def draw_lines(self) -> None:
-        # Copy from previous assignment
         for x in range(0, self.width, self.cell_size):
             pygame.draw.line(self.screen, pygame.Color('black'),
                              (x, 0), (x, self.height))
@@ -31,7 +30,6 @@ class GUI(UI):
         pass
 
     def draw_grid(self) -> None:
-        # Copy from previous assignment
         for i in range(self.life.rows):
             for j in range(self.life.cols):
                 if self.life.curr_generation[i][j] == 1:
@@ -43,10 +41,7 @@ class GUI(UI):
                                      pygame.Rect(j * self.cell_size, i * self.cell_size,
                                                  self.life.cols * self.cell_size, self.life.rows * self.cell_size))
 
-        pass
-
     def run(self) -> None:
-        # Copy from previous assignment
         pygame.init()
         clock = pygame.time.Clock()
         pygame.display.set_caption('Game of Life')
@@ -90,6 +85,7 @@ class GUI(UI):
                 clock.tick(self.speed)
         pygame.quit()
         pass
+
 
 life = GameOfLife((7, 7), True)
 gui = GUI(life, 100)
