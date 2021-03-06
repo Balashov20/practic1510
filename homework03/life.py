@@ -1,5 +1,6 @@
 import pathlib
 import random
+import json
 
 from typing import List, Optional, Tuple
 
@@ -14,8 +15,8 @@ class GameOfLife:
     def __init__(
         self,
         size: Tuple[int, int],
-        randomize: bool=True,
-        max_generations: Optional[float]=float('inf')
+        randomize: bool = True,
+        max_generations: Optional[float] = float('inf')
     ) -> None:
         # Размер клеточного поля
         self.rows, self.cols = size
@@ -30,20 +31,64 @@ class GameOfLife:
 
     def create_grid(self, randomize: bool=False) -> Grid:
         # Copy from previous assignment
-        pass
+        if not randomize:
+            grid = [[0 for x in range(self.cell_width)] for i in range(self.cell_height)]
+        else:
+            grid = [[random.randint(0, 1) for x in range(self.cell_width)] for i in range(self.cell_height)]
+        return grid
 
     def get_neighbours(self, cell: Cell) -> Cells:
         # Copy from previous assignment
-        pass
+        cells = []
+
+        height_begin = cell[0] - 1
+        height_end = cell[0] + 1
+        if (cell[0] == 0):
+            height_begin = 0
+        elif (cell[0] == self.cell_height - 1):
+            height_end = cell[0]
+
+        width_begin = cell[1] - 1
+        width_end = cell[1] + 1
+        if (cell[1] == 0):
+            width_begin = 0
+        elif (cell[1] == self.cell_width - 1):
+            width_end = cell[1]
+
+        for i in range(height_begin, height_end + 1):
+            for j in range(width_begin, width_end + 1):
+                if not ((cell[0] == i) and (cell[1] == j)):
+                    cells.append(self.grid[i][j])
+
+        return cells
 
     def get_next_generation(self) -> Grid:
         # Copy from previous assignment
-        pass
+        new_grid = []
+        for i in range(self.cell_height):
+            new_cell = []
+            for j in range(self.cell_width):
+                if self.grid[i][j] == 0:
+                    if self.get_neighbours((i, j)).count(1) == 3:
+                        new_cell.append(1)
+                    else:
+                        new_cell.append(0)
+                else:
+                    if self.get_neighbours((i, j)).count(1) == 2 or self.get_neighbours((i, j)).count(1) == 3:
+                        new_cell.append(1)
+                    else:
+                        new_cell.append(0)
+                new_grid.append(new_cell)
+
+        return new_grid
 
     def step(self) -> None:
         """
         Выполнить один шаг игры.
         """
+        self.prev_generation = self.curr_generation
+        self.curr_generation = self.get_next_generation()
+        self.generations += 1
         pass
 
     @property
@@ -51,24 +96,50 @@ class GameOfLife:
         """
         Не превысило ли текущее число поколений максимально допустимое.
         """
-        pass
+        if self.generations > self.max_generations:
+            return False
+        else:
+            return True
 
     @property
     def is_changing(self) -> bool:
         """
         Изменилось ли состояние клеток с предыдущего шага.
         """
-        pass
+        if self.prev_generation == self.curr_generation:
+            return False
+        else:
+            return True
 
     @staticmethod
     def from_file(filename: pathlib.Path) -> 'GameOfLife':
         """
         Прочитать состояние клеток из указанного файла.
         """
-        pass
+        f = open(filename, 'r')
+        game_status = json.load(f)
+
+        life = GameOfLife((game_status['rows'], game_status['cols']), randomize=False,
+                          max_generations=game_status['max_generations'])
+        life.prev_generation = game_status['prev_generation']
+        life.curr_generation = game_status['curr_generation']
+        life.generations = game_status['generations']
+
+        return life
 
     def save(filename: pathlib.Path) -> None:
         """
         Сохранить текущее состояние клеток в указанный файл.
         """
+        game_status = {
+            'rows': self.rows,
+            'cols': self.cols,
+            'max_generations': self.max_generations,
+            'prev_generation': self.prev_generation,
+            'curr_generation': self.curr_generation,
+            'generations': self.generations
+        }
+
+        f = open(filename, 'w')
+        json.dump(game_status, f)
         pass
