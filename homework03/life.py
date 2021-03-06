@@ -4,19 +4,18 @@ import json
 
 from typing import List, Optional, Tuple
 
-
 Cell = Tuple[int, int]
 Cells = List[int]
 Grid = List[Cells]
 
 
 class GameOfLife:
-    
+
     def __init__(
-        self,
-        size: Tuple[int, int],
-        randomize: bool = True,
-        max_generations: Optional[float] = float('inf')
+            self,
+            size: Tuple[int, int],
+            randomize: bool = True,
+            max_generations: Optional[float] = float('inf')
     ) -> None:
         # Размер клеточного поля
         self.rows, self.cols = size
@@ -29,31 +28,29 @@ class GameOfLife:
         # Текущее число поколений
         self.generations = 1
 
-    def create_grid(self, randomize: bool=False) -> Grid:
-        # Copy from previous assignment
+    def create_grid(self, randomize: bool = False) -> Grid:
         if randomize:
-            grid = [[random.randint(0, 1) for x in range(self.cols)] for i in range(self.rows)]
+            grid = [[random.randint(0, 1) for i in range(self.cols)] for j in range(self.rows)]
         else:
             grid = [[0 for x in range(self.cols)] for i in range(self.rows)]
         return grid
 
     def get_neighbours(self, cell: Cell) -> Cells:
-        # Copy from previous assignment
         cells = []
-
-        height_begin = cell[0] - 1
-        height_end = cell[0] + 1
-        if (cell[0] == 0):
-            height_begin = 0
-        elif (cell[0] == self.rows - 1):
-            height_end = cell[0]
 
         width_begin = cell[1] - 1
         width_end = cell[1] + 1
-        if (cell[1] == 0):
+        if cell[1] == 0:
             width_begin = 0
-        elif (cell[1] == self.cols - 1):
+        elif cell[1] == self.cols - 1:
             width_end = cell[1]
+
+        height_begin = cell[0] - 1
+        height_end = cell[0] + 1
+        if cell[0] == 0:
+            height_begin = 0
+        elif cell[0] == self.rows - 1:
+            height_end = cell[0]
 
         for i in range(height_begin, height_end + 1):
             for j in range(width_begin, width_end + 1):
@@ -63,7 +60,6 @@ class GameOfLife:
         return cells
 
     def get_next_generation(self) -> Grid:
-        # Copy from previous assignment
         new_grid = []
         for i in range(self.rows):
             new_cell = []
@@ -78,7 +74,7 @@ class GameOfLife:
                         new_cell.append(1)
                     else:
                         new_cell.append(0)
-                new_grid.append(new_cell)
+            new_grid.append(new_cell)
 
         return new_grid
 
@@ -127,7 +123,7 @@ class GameOfLife:
 
         return life
 
-    def save(filename: pathlib.Path) -> None:
+    def save(self, filename: pathlib.Path) -> None:
         """
         Сохранить текущее состояние клеток в указанный файл.
         """
